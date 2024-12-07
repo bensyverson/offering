@@ -1,38 +1,24 @@
+name: Deploy when pushing on main
 
-name: Deploy Bunny Scripting Script
-
-on:
+on: 
   push:
     branches:
-      - main
+      - 'main'
 
-permissions:
-  id-token: write
-  contents: read
 
 jobs:
-  update-script:
+  publish:
     runs-on: ubuntu-latest
 
+    name: 'Upload script'
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v3
+      - name: Deploy Script to Bunny Edge Scripting
+        uses: BunnyWay/actions/deploy-script@latest
         with:
-          node-version: '22'
-
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
-
-      - name: Install
-        run: "echo "install""
-
-      - name: Build
-        run: "echo "build""
-
-      - name: Publish the script to Bunny
-        uses: "BunnyWay/actions/deploy-script@main"
-        with:
-          script_id: 16500
-          file: "echo "install""
+          script_id: ${{ secrets.SCRIPT_ID }}
+          deploy_key: ${{ secrets.DEPLOY_KEY }}
+          file: "script.ts"
